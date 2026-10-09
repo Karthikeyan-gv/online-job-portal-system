@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { notificationService } from '../services/notificationService';
+import EmailDrawer from './EmailDrawer';
 import { 
-  BiBriefcaseAlt2, BiBell, BiUserCircle, BiLogOut, BiBookmark, 
+  BiBriefcaseAlt2, BiBell, BiEnvelope, BiUserCircle, BiLogOut, BiBookmark, 
   BiPlusCircle, BiListCheck, BiBuilding, BiGridAlt, BiChevronDown 
 } from 'react-icons/bi';
 
@@ -12,13 +13,18 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  useEffect(() => {
+  const fetchUnreadCount = () => {
     if (isAuthenticated) {
       notificationService.getUnreadCount()
         .then(res => setUnreadCount(res.data || 0))
         .catch(() => {});
     }
+  };
+
+  useEffect(() => {
+    fetchUnreadCount();
   }, [isAuthenticated, location.pathname]);
 
   const handleLogout = () => {
@@ -27,6 +33,7 @@ const Navbar = () => {
   };
 
   return (
+    <>
     <nav className="navbar navbar-expand-lg navbar-dark bg-slate-900 sticky-top shadow-sm py-2">
       <div className="container">
         <Link className="navbar-brand d-flex align-items-center fw-bold fs-4 text-primary-gradient" to="/">
@@ -67,15 +74,20 @@ const Navbar = () => {
           <div className="d-flex align-items-center gap-3">
             {isAuthenticated ? (
               <>
-                {/* Notification Icon */}
-                <Link to={isJobSeeker() ? "/jobseeker/notifications" : isEmployer() ? "/employer/notifications" : "/admin/dashboard"} className="position-relative text-light p-2 rounded-circle hover-bg-slate">
-                  <BiBell className="fs-4" />
+                {/* Email Inbox Drawer Trigger */}
+                <button 
+                  onClick={() => setIsDrawerOpen(true)}
+                  className="btn btn-slate-800 text-light position-relative p-2 rounded-circle hover-bg-slate border-0 d-flex align-items-center justify-content-center"
+                  title="Open Formatted Email Inbox"
+                  style={{ width: 40, height: 40 }}
+                >
+                  <BiEnvelope className="fs-4" />
                   {unreadCount > 0 && (
                     <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
                       {unreadCount}
                     </span>
                   )}
-                </Link>
+                </button>
 
                 {/* User Dropdown */}
                 <div className="dropdown">
@@ -149,6 +161,13 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
+
+    <EmailDrawer 
+      isOpen={isDrawerOpen} 
+      onClose={() => setIsDrawerOpen(false)} 
+      onRefreshCount={fetchUnreadCount} 
+    />
+    </>
   );
 };
 

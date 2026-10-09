@@ -31,4 +31,10 @@ public class NotificationController {
         notificationService.markAsRead(id);
         return ResponseEntity.ok(new ApiResponse<>(true, "Notification marked as read"));
     }
+
+    @PutMapping("/read-all")
+    public ResponseEntity<ApiResponse<Void>> markAllAsRead() {
+        notificationService.markAllAsRead();
+        return ResponseEntity.ok(new ApiResponse<>(true, "All notifications marked as read"));
+    }
 }
