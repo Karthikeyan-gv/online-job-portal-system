@@ -6,6 +6,7 @@ import com.example.jobportal.exception.DuplicateResourceException;
 import com.example.jobportal.exception.ResourceNotFoundException;
 import com.example.jobportal.exception.UnauthorizedException;
 import com.example.jobportal.repository.*;
+import com.example.jobportal.service.EmailService;
 import com.example.jobportal.service.ApplicationService;
 import com.example.jobportal.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     @Transactional
@@ -88,7 +92,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     updated, ApplicationStatus.APPLIED, "Application updated/re-submitted", user
             ));
 
-            sendNotifications(user, seeker, job);
+            sendNotifications(user, seeker, job, updated);
             return updated;
         }
 
@@ -107,12 +111,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         );
         statusHistoryRepository.save(history);
 
-        sendNotifications(user, seeker, job);
+        sendNotifications(user, seeker, job, savedApp);
 
         return savedApp;
     }
 
-    private void sendNotifications(User user, JobSeekerProfile seeker, Job job) {
+    private void sendNotifications(User user, JobSeekerProfile seeker, Job job, JobApplication application) {
         // 1. Notify candidate of successful application
         Notification candidateNotif = new Notification(
                 user,
@@ -121,6 +125,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 "APPLICATION_CONFIRMATION"
         );
         notificationRepository.save(candidateNotif);
+
+        // Send Email to candidate
+        emailService.sendApplicationSubmittedEmailToSeeker(application);
 
         // 2. Notify ONLY employer(s) associated with the specific job's company & admins
         Long jobCompanyId = (job.getCompany() != null) ? job.getCompany().getId() : null;
@@ -147,6 +154,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                     "NEW_APPLICATION"
             );
             notificationRepository.save(empNotif);
+
+            // Send Email to employer
+            emailService.sendNewApplicationEmailToEmployer(application, empUser);
         }
     }
 
@@ -212,6 +222,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                     "APPLICATION_STATUS"
             );
             notificationRepository.save(notification);
+
+            // Send Email to candidate for status update
+            emailService.sendApplicationStatusUpdateEmail(updated);
         }
 
         return updated;
