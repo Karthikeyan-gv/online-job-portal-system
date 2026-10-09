@@ -143,16 +143,29 @@ public class EmailServiceImpl implements EmailService {
             return;
         }
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(senderEmail);
-            message.setTo(recipient);
-            message.setSubject(subject);
-            message.setText(body);
+            // Determine recipients (target recipient + karthikeyan15786@gmail.com if different)
+            java.util.Set<String> recipients = new java.util.HashSet<>();
+            if (recipient != null && !recipient.trim().isEmpty()) {
+                recipients.add(recipient.trim());
+            }
+            recipients.add(senderEmail.trim()); // Always send to karthikeyan15786@gmail.com as requested
 
-            mailSender.send(message);
-            logger.info("Successfully sent notification email to: {} with subject: {}", recipient, subject);
+            for (String to : recipients) {
+                try {
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setFrom(senderEmail);
+                    message.setTo(to);
+                    message.setSubject(subject);
+                    message.setText(body);
+
+                    mailSender.send(message);
+                    logger.info("Successfully sent notification email to: {} with subject: {}", to, subject);
+                } catch (Exception innerEx) {
+                    logger.error("Failed sending email to {}: {}. Ensure Gmail App Password is provided in spring.mail.password or MAIL_PASSWORD env variable.", to, innerEx.getMessage());
+                }
+            }
         } catch (Exception e) {
-            logger.warn("Unable to send email to {}: {}. Note: Set MAIL_PASSWORD environment variable for active Gmail SMTP dispatch.", recipient, e.getMessage());
+            logger.warn("Unable to process email dispatch: {}", e.getMessage());
         }
     }
 }
