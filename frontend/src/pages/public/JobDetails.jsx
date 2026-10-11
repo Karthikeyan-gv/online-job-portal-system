@@ -47,7 +47,7 @@ const JobDetails = () => {
 
   const handleOpenApplyModal = async () => {
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate(`/login?redirect=${encodeURIComponent(`/jobs/${id}`)}`);
       return;
     }
     if (!isJobSeeker()) {
@@ -122,7 +122,12 @@ const JobDetails = () => {
                 </div>
               </div>
 
-              <div className="d-flex flex-wrap gap-3 mt-3">
+              <div className="d-flex flex-wrap gap-2 mt-3">
+                {job.category?.name && (
+                  <span className="badge bg-purple-subtle text-purple rounded-pill px-3 py-2 fw-semibold">
+                    {job.category.name}
+                  </span>
+                )}
                 <span className="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-medium">
                   <BiBriefcase className="me-1" /> {job.jobType?.replace('_', ' ')}
                 </span>

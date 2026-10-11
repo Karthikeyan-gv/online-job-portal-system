@@ -9,7 +9,8 @@ import { companyService } from '../../services/companyService';
 import { 
   BiSearch, BiBuilding, BiUserCheck, BiBriefcase, BiCheckShield, 
   BiRocket, BiBrain, BiCodeAlt, BiCloud, BiPalette, BiCheckCircle,
-  BiTrendingUp, BiChevronRight, BiShieldQuarter, BiStar, BiTargetLock
+  BiTrendingUp, BiChevronRight, BiShieldQuarter, BiStar, BiTargetLock,
+  BiMobile, BiData, BiPlusMedical, BiSupport, BiEdit, BiMoney
 } from 'react-icons/bi';
 
 const Home = () => {
@@ -18,6 +19,60 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const [topCompanies, setTopCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [categoryTab, setCategoryTab] = useState('all');
+
+  const getCategoryMeta = (name = '') => {
+    const n = name.toLowerCase();
+    if (n.includes('software') || n.includes('development')) {
+      return { icon: <BiCodeAlt />, isTech: true, color: 'text-primary', bg: 'bg-primary-subtle' };
+    }
+    if (n.includes('ai') || n.includes('intelligence') || n.includes('data science')) {
+      return { icon: <BiBrain />, isTech: true, color: 'text-purple', bg: 'bg-purple-subtle' };
+    }
+    if (n.includes('cloud') || n.includes('devops')) {
+      return { icon: <BiCloud />, isTech: true, color: 'text-info', bg: 'bg-info-subtle' };
+    }
+    if (n.includes('cyber') || n.includes('security')) {
+      return { icon: <BiShieldQuarter />, isTech: true, color: 'text-danger', bg: 'bg-danger-subtle' };
+    }
+    if (n.includes('mobile')) {
+      return { icon: <BiMobile />, isTech: true, color: 'text-warning', bg: 'bg-warning-subtle' };
+    }
+    if (n.includes('ui') || n.includes('ux') || n.includes('design')) {
+      return { icon: <BiPalette />, isTech: true, color: 'text-danger', bg: 'bg-danger-subtle' };
+    }
+    if (n.includes('qa') || n.includes('testing')) {
+      return { icon: <BiCheckCircle />, isTech: true, color: 'text-success', bg: 'bg-success-subtle' };
+    }
+    if (n.includes('database') || n.includes('big data')) {
+      return { icon: <BiData />, isTech: true, color: 'text-primary', bg: 'bg-primary-subtle' };
+    }
+    if (n.includes('human') || n.includes('talent') || n.includes('hr')) {
+      return { icon: <BiUserCheck />, isTech: false, color: 'text-success', bg: 'bg-success-subtle' };
+    }
+    if (n.includes('finance') || n.includes('accounting') || n.includes('banking')) {
+      return { icon: <BiMoney />, isTech: false, color: 'text-success', bg: 'bg-success-subtle' };
+    }
+    if (n.includes('marketing') || n.includes('seo')) {
+      return { icon: <BiTrendingUp />, isTech: false, color: 'text-warning', bg: 'bg-warning-subtle' };
+    }
+    if (n.includes('sales')) {
+      return { icon: <BiTargetLock />, isTech: false, color: 'text-danger', bg: 'bg-danger-subtle' };
+    }
+    if (n.includes('operation') || n.includes('project')) {
+      return { icon: <BiBriefcase />, isTech: false, color: 'text-primary', bg: 'bg-primary-subtle' };
+    }
+    if (n.includes('health') || n.includes('medical')) {
+      return { icon: <BiPlusMedical />, isTech: false, color: 'text-danger', bg: 'bg-danger-subtle' };
+    }
+    if (n.includes('customer') || n.includes('support')) {
+      return { icon: <BiSupport />, isTech: false, color: 'text-info', bg: 'bg-info-subtle' };
+    }
+    if (n.includes('content') || n.includes('communication') || n.includes('pr')) {
+      return { icon: <BiEdit />, isTech: false, color: 'text-purple', bg: 'bg-purple-subtle' };
+    }
+    return { icon: <BiBriefcase />, isTech: false, color: 'text-primary', bg: 'bg-primary-subtle' };
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,13 +106,13 @@ const Home = () => {
           <div className="row align-items-center g-5">
             <div className="col-lg-7">
               <div className="d-inline-flex align-items-center gap-2 bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3.5 py-1.5 fw-semibold mb-3">
-                <BiRocket className="fs-5 text-primary" /> #1 Next-Gen Tech Hiring & Career Platform
+                <BiRocket className="fs-5 text-primary" /> #1 Next-Gen Tech & Business Hiring Platform
               </div>
               <h1 className="display-4 fw-extrabold text-white mb-3 leading-tight">
-                Find Your Dream <span className="text-gradient-primary">Tech Role</span> & Fast-Track Your Career
+                Find Your Dream <span className="text-gradient-primary">Career Role</span> & Fast-Track Your Future
               </h1>
               <p className="lead text-slate-300 mb-4 me-lg-4">
-                Discover thousands of verified tech openings from top tech startups and global leaders. Experience live application tracking and direct employer recruitment pipelines.
+                Discover verified career openings across technology, finance, marketing, and operations from top enterprises and unicorn startups.
               </p>
 
               {/* Main Search Bar */}
@@ -68,7 +123,7 @@ const Home = () => {
               {/* Popular Search Tags */}
               <div className="d-flex align-items-center flex-wrap gap-2 mt-3 text-slate-400 small">
                 <span className="fw-semibold text-slate-300">Trending Searches:</span>
-                {['Java Developer', 'React Architect', 'Spring Boot', 'Remote Roles', 'Full Stack'].map((tag) => (
+                {['Java Developer', 'Data Scientist', 'HR Specialist', 'Financial Analyst', 'Marketing Lead', 'Remote Roles'].map((tag) => (
                   <button
                     key={tag}
                     className="btn btn-slate-800 text-slate-300 btn-sm rounded-pill border border-slate-700 hover-bg-primary hover-text-white px-3 extra-small fw-medium"
@@ -167,29 +222,66 @@ const Home = () => {
               <h2 className="fw-extrabold text-dark mb-0">Browse By Industry Category</h2>
             </div>
             <Link to="/jobs" className="btn btn-outline-primary rounded-pill px-4 fw-semibold">
-              Explore All Categories <BiChevronRight />
+              Explore All Jobs <BiChevronRight />
             </Link>
           </div>
 
-          <div className="row g-4">
-            {categories.slice(0, 6).map((cat, idx) => (
-              <div key={cat.id || idx} className="col-lg-4 col-md-6">
-                <div 
-                  className="card border-0 shadow-sm rounded-4 p-4 h-100 hover-lift transition-all cursor-pointer bg-white"
-                  onClick={() => navigate(`/jobs?categoryId=${cat.id}`)}
-                >
-                  <div className="d-flex align-items-center gap-3">
-                    <div className="bg-primary-subtle text-primary rounded-4 p-3 d-flex align-items-center justify-content-center fs-2" style={{ width: 54, height: 54 }}>
-                      {idx % 4 === 0 ? <BiCodeAlt /> : idx % 4 === 1 ? <BiBrain /> : idx % 4 === 2 ? <BiCloud /> : <BiPalette />}
-                    </div>
-                    <div>
-                      <h5 className="fw-bold mb-1 text-dark">{cat.name}</h5>
-                      <p className="text-muted small mb-0">{cat.description || 'Explore top engineering roles'}</p>
+          {/* Category Filter Tabs */}
+          <div className="d-flex align-items-center gap-2 mb-4 overflow-x-auto pb-2">
+            <button
+              className={`btn btn-sm rounded-pill px-3 py-1.5 fw-semibold ${categoryTab === 'all' ? 'btn-primary shadow-sm' : 'btn-outline-secondary'}`}
+              onClick={() => setCategoryTab('all')}
+            >
+              All Sectors ({categories.length})
+            </button>
+            <button
+              className={`btn btn-sm rounded-pill px-3 py-1.5 fw-semibold ${categoryTab === 'tech' ? 'btn-primary shadow-sm' : 'btn-outline-secondary'}`}
+              onClick={() => setCategoryTab('tech')}
+            >
+              Tech & Engineering ({categories.filter(c => getCategoryMeta(c.name).isTech).length})
+            </button>
+            <button
+              className={`btn btn-sm rounded-pill px-3 py-1.5 fw-semibold ${categoryTab === 'non-tech' ? 'btn-primary shadow-sm' : 'btn-outline-secondary'}`}
+              onClick={() => setCategoryTab('non-tech')}
+            >
+              Business & Non-Tech ({categories.filter(c => !getCategoryMeta(c.name).isTech).length})
+            </button>
+          </div>
+
+          <div className="row g-3">
+            {categories
+              .filter(cat => {
+                const meta = getCategoryMeta(cat.name);
+                if (categoryTab === 'tech') return meta.isTech;
+                if (categoryTab === 'non-tech') return !meta.isTech;
+                return true;
+              })
+              .map((cat, idx) => {
+                const meta = getCategoryMeta(cat.name);
+                return (
+                  <div key={cat.id || idx} className="col-lg-4 col-md-6">
+                    <div 
+                      className="card border-0 shadow-sm rounded-4 p-3 h-100 hover-lift transition-all cursor-pointer bg-white"
+                      onClick={() => navigate(`/jobs?categoryId=${cat.id}`)}
+                    >
+                      <div className="d-flex align-items-center gap-3">
+                        <div className={`${meta.bg} ${meta.color} rounded-4 p-3 d-flex align-items-center justify-content-center fs-2 flex-shrink-0`} style={{ width: 52, height: 52 }}>
+                          {meta.icon}
+                        </div>
+                        <div className="flex-grow-1 min-w-0">
+                          <div className="d-flex align-items-center justify-content-between mb-1">
+                            <h6 className="fw-bold text-dark mb-0 text-truncate">{cat.name}</h6>
+                            <span className={`badge rounded-pill extra-small ${meta.isTech ? 'bg-primary-subtle text-primary' : 'bg-success-subtle text-success'}`}>
+                              {meta.isTech ? 'Tech' : 'Non-Tech'}
+                            </span>
+                          </div>
+                          <p className="text-muted small mb-0 line-clamp-1">{cat.description || 'Explore verified openings'}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
         </div>
       </section>

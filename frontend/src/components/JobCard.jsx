@@ -56,7 +56,7 @@ const JobCard = ({ job, isSavedInitial = false, onSaveToggle }) => {
               </div>
             </div>
 
-            {isAuthenticated && isJobSeeker() && (
+            {isAuthenticated && isJobSeeker() ? (
               <button
                 className={`btn btn-link p-2 rounded-circle ${saved ? 'text-danger' : 'text-muted'} border-0`}
                 onClick={handleSaveToggle}
@@ -65,17 +65,30 @@ const JobCard = ({ job, isSavedInitial = false, onSaveToggle }) => {
               >
                 {saved ? <BiBookmarkHeart className="fs-4 text-danger" /> : <BiBookmark className="fs-4" />}
               </button>
-            )}
+            ) : !isAuthenticated ? (
+              <Link
+                to={`/login?redirect=/jobs/${job.id}`}
+                className="btn btn-link p-2 rounded-circle text-muted border-0"
+                title="Login to save job"
+              >
+                <BiBookmark className="fs-4" />
+              </Link>
+            ) : null}
           </div>
 
           <div className="d-flex flex-wrap gap-2 my-3">
-            <span className="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 small fw-medium">
+            {job.category?.name && (
+              <span className="badge bg-purple-subtle text-purple rounded-pill px-3 py-1.5 small fw-semibold">
+                {job.category.name}
+              </span>
+            )}
+            <span className="badge bg-primary-subtle text-primary rounded-pill px-3 py-1.5 small fw-medium">
               <BiBriefcase className="me-1" /> {job.jobType?.replace('_', ' ')}
             </span>
-            <span className="badge bg-success-subtle text-success rounded-pill px-3 py-2 small fw-medium">
+            <span className="badge bg-success-subtle text-success rounded-pill px-3 py-1.5 small fw-medium">
               {job.workMode}
             </span>
-            <span className="badge bg-info-subtle text-info rounded-pill px-3 py-2 small fw-medium">
+            <span className="badge bg-info-subtle text-info rounded-pill px-3 py-1.5 small fw-medium">
               <BiMapPin className="me-1" /> {job.location || 'Remote'}
             </span>
           </div>

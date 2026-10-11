@@ -31,6 +31,19 @@ const JobFilter = ({ categories = [], filters, onFilterChange, onReset }) => {
       {/* Job Type Filter */}
       <div className="mb-4">
         <label className="form-label fw-semibold small text-uppercase text-muted">Job Type</label>
+        <div className="form-check mb-2">
+          <input
+            className="form-check-input"
+            type="radio"
+            name="jobType"
+            id="type-all"
+            checked={!filters.jobType}
+            onChange={() => onFilterChange('jobType', '')}
+          />
+          <label className="form-check-label small" htmlFor="type-all">
+            All Types
+          </label>
+        </div>
         {['FULL_TIME', 'PART_TIME', 'INTERNSHIP', 'CONTRACT', 'FREELANCE'].map((type) => (
           <div className="form-check mb-2" key={type}>
             <input
@@ -39,7 +52,7 @@ const JobFilter = ({ categories = [], filters, onFilterChange, onReset }) => {
               name="jobType"
               id={`type-${type}`}
               checked={filters.jobType === type}
-              onChange={() => onFilterChange('jobType', filters.jobType === type ? '' : type)}
+              onChange={() => onFilterChange('jobType', type)}
             />
             <label className="form-check-label small text-capitalize" htmlFor={`type-${type}`}>
               {type.replace('_', ' ').toLowerCase()}
@@ -51,6 +64,19 @@ const JobFilter = ({ categories = [], filters, onFilterChange, onReset }) => {
       {/* Work Mode Filter */}
       <div className="mb-4">
         <label className="form-label fw-semibold small text-uppercase text-muted">Work Mode</label>
+        <div className="form-check mb-2">
+          <input
+            className="form-check-input"
+            type="radio"
+            name="workMode"
+            id="mode-all"
+            checked={!filters.workMode}
+            onChange={() => onFilterChange('workMode', '')}
+          />
+          <label className="form-check-label small" htmlFor="mode-all">
+            All Modes
+          </label>
+        </div>
         {['ONSITE', 'REMOTE', 'HYBRID'].map((mode) => (
           <div className="form-check mb-2" key={mode}>
             <input
@@ -59,7 +85,7 @@ const JobFilter = ({ categories = [], filters, onFilterChange, onReset }) => {
               name="workMode"
               id={`mode-${mode}`}
               checked={filters.workMode === mode}
-              onChange={() => onFilterChange('workMode', filters.workMode === mode ? '' : mode)}
+              onChange={() => onFilterChange('workMode', mode)}
             />
             <label className="form-check-label small text-capitalize" htmlFor={`mode-${mode}`}>
               {mode.toLowerCase()}

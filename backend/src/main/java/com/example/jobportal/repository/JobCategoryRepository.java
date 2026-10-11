@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface JobCategoryRepository extends JpaRepository<JobCategory, Long> {
     Optional<JobCategory> findByName(String name);
+    boolean existsByName(String name);
 }

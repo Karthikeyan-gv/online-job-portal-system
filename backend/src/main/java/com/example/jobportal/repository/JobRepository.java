@@ -17,4 +17,5 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
     List<Job> findByCompany(Company company);
     Page<Job> findByCompanyId(Long companyId, Pageable pageable);
     long countByStatus(JobStatus status);
+    boolean existsByTitleAndCompany(String title, Company company);
 }

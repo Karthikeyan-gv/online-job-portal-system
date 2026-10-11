@@ -26,7 +26,7 @@ const Jobs = () => {
     categoryId: searchParams.get('categoryId') || '',
     jobType: searchParams.get('jobType') || '',
     workMode: searchParams.get('workMode') || '',
-    sortBy: 'createdAt'
+    sortBy: searchParams.get('sortBy') || 'createdAt'
   });
 
   useEffect(() => {
@@ -34,6 +34,26 @@ const Jobs = () => {
       .then(res => setCategories(res.data || []))
       .catch(console.error);
   }, []);
+
+  // React to URL changes (e.g. from Home category clicks or navigation)
+  useEffect(() => {
+    const kw = searchParams.get('keyword') || '';
+    const loc = searchParams.get('location') || '';
+    const cat = searchParams.get('categoryId') || '';
+    const jt = searchParams.get('jobType') || '';
+    const wm = searchParams.get('workMode') || '';
+    const sb = searchParams.get('sortBy') || 'createdAt';
+
+    setFilters({
+      keyword: kw,
+      location: loc,
+      categoryId: cat,
+      jobType: jt,
+      workMode: wm,
+      sortBy: sb
+    });
+    setCurrentPage(0);
+  }, [searchParams]);
 
   useEffect(() => {
     fetchJobs(currentPage);
@@ -46,8 +66,8 @@ const Jobs = () => {
       const params = {
         page,
         size: 9,
-        keyword: filters.keyword,
-        location: filters.location,
+        keyword: filters.keyword || null,
+        location: filters.location || null,
         categoryId: filters.categoryId || null,
         jobType: filters.jobType || null,
         workMode: filters.workMode || null,
@@ -66,16 +86,23 @@ const Jobs = () => {
   };
 
   const handleSearch = ({ keyword, location }) => {
-    setFilters(prev => ({ ...prev, keyword, location }));
-    setCurrentPage(0);
+    const next = new URLSearchParams(searchParams);
+    if (keyword) next.set('keyword', keyword);
+    else next.delete('keyword');
+    if (location) next.set('location', location);
+    else next.delete('location');
+    setSearchParams(next);
   };
 
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-    setCurrentPage(0);
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set(key, value);
+    else next.delete(key);
+    setSearchParams(next);
   };
 
   const handleResetFilters = () => {
+    setSearchParams({});
     setFilters({
       keyword: '',
       location: '',
@@ -84,7 +111,6 @@ const Jobs = () => {
       workMode: '',
       sortBy: 'createdAt'
     });
-    setSearchParams({});
     setCurrentPage(0);
   };
 

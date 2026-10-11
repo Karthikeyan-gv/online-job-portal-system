@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BiSearch, BiMap, BiBriefcase } from 'react-icons/bi';
 
 const SearchBar = ({ onSearch, initialKeyword = '', initialLocation = '' }) => {
   const [keyword, setKeyword] = useState(initialKeyword);
   const [location, setLocation] = useState(initialLocation);
 
+  useEffect(() => {
+    setKeyword(initialKeyword);
+  }, [initialKeyword]);
+
+  useEffect(() => {
+    setLocation(initialLocation);
+  }, [initialLocation]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (onSearch) {
-      onSearch({ keyword, location });
+      onSearch({ keyword: keyword.trim(), location: location.trim() });
     }
   };
 

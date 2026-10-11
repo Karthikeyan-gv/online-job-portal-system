@@ -74,20 +74,25 @@ const Navbar = () => {
           <div className="d-flex align-items-center gap-3">
             {isAuthenticated ? (
               <>
-                {/* Email Inbox Drawer Trigger */}
-                <button 
-                  onClick={() => setIsDrawerOpen(true)}
-                  className="btn btn-slate-800 text-light position-relative p-2 rounded-circle hover-bg-slate border-0 d-flex align-items-center justify-content-center"
-                  title="Open Formatted Email Inbox"
-                  style={{ width: 40, height: 40 }}
-                >
-                  <BiEnvelope className="fs-4" />
+                {/* Email Inbox Drawer Trigger - Non-overlapping badge */}
+                <div className="position-relative me-1">
+                  <button 
+                    onClick={() => setIsDrawerOpen(true)}
+                    className="btn btn-slate-800 text-light p-2 rounded-circle border-0 d-flex align-items-center justify-content-center"
+                    title="Open Formatted Email Inbox"
+                    style={{ width: 40, height: 40, backgroundColor: '#1e293b' }}
+                  >
+                    <BiEnvelope className="fs-5" />
+                  </button>
                   {unreadCount > 0 && (
-                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
+                    <span 
+                      className="badge rounded-pill bg-danger text-white position-absolute shadow-sm"
+                      style={{ top: -4, right: -4, fontSize: '10px', padding: '3px 6px' }}
+                    >
                       {unreadCount}
                     </span>
                   )}
-                </button>
+                </div>
 
                 {/* User Dropdown */}
                 <div className="dropdown">
