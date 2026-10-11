@@ -27,8 +27,25 @@ const EmailDrawer = ({ isOpen, onClose, onRefreshCount }) => {
   useEffect(() => {
     if (isOpen) {
       fetchNotifications();
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
     }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen]);
+
+  // Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   const handleMarkAsRead = async (id) => {
     try {
@@ -59,35 +76,47 @@ const EmailDrawer = ({ isOpen, onClose, onRefreshCount }) => {
     return true;
   });
 
+  const unreadTotal = notifications.filter(n => !n.isRead && !n.read).length;
+
   return (
-    <div className="position-fixed top-0 end-0 bottom-0 start-0 z-3 d-flex justify-content-end" style={{ backgroundColor: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)' }}>
-      <div className="bg-white h-100 shadow-2xl d-flex flex-column" style={{ width: '100%', maxWidth: '850px', transition: 'transform 0.3s ease-in-out' }}>
+    <div 
+      className="position-fixed top-0 end-0 bottom-0 start-0 d-flex justify-content-end" 
+      style={{ backgroundColor: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(5px)', zIndex: 99999 }}
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white h-100 shadow-2xl d-flex flex-column position-relative" 
+        style={{ width: '100%', maxWidth: '850px', zIndex: 100000, transition: 'transform 0.3s ease-in-out' }}
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Header */}
-        <div className="bg-slate-900 text-white p-4 d-flex align-items-center justify-content-between border-bottom border-slate-800">
+        <div className="bg-slate-900 text-white p-3 p-md-4 d-flex align-items-center justify-content-between border-bottom border-slate-800 flex-wrap gap-2">
           <div className="d-flex align-items-center gap-3">
-            <div className="bg-primary bg-opacity-20 p-2.5 rounded-3 text-primary">
-              <BiEnvelope className="fs-3" />
+            <div className="bg-primary bg-opacity-20 p-2.5 rounded-3 text-primary d-flex align-items-center justify-content-center" style={{ width: 44, height: 44 }}>
+              <BiEnvelope className="fs-3 text-primary" />
             </div>
             <div>
-              <h5 className="mb-0 fw-bold d-flex align-items-center gap-2 text-white">
-                Email Inbox & Portal Alerts
-                <span className="badge bg-primary rounded-pill fs-7">{notifications.filter(n => !n.isRead && !n.read).length} Unread</span>
-              </h5>
-              <small className="text-slate-400">Formatted notification emails for candidates & employers</small>
+              <div className="d-flex align-items-center gap-2 flex-wrap">
+                <h5 className="mb-0 fw-bold text-white">Email Inbox & Portal Alerts</h5>
+                <span className="badge bg-primary rounded-pill px-2.5 py-1" style={{ fontSize: '11px' }}>
+                  {unreadTotal} Unread
+                </span>
+              </div>
+              <small className="text-slate-400 d-block mt-0.5">Formatted notification emails for candidates & employers</small>
             </div>
           </div>
 
           <div className="d-flex align-items-center gap-2">
-            <button className="btn btn-sm btn-outline-light d-flex align-items-center gap-1 rounded-2" onClick={handleMarkAllRead} title="Mark all as read">
+            <button className="btn btn-sm btn-outline-light d-flex align-items-center gap-1 rounded-pill px-3" onClick={handleMarkAllRead} title="Mark all as read">
               <BiCheckDouble className="fs-5" />
-              <span className="d-none d-sm-inline">Mark All Read</span>
+              <span className="d-none d-sm-inline small fw-semibold">Mark All Read</span>
             </button>
-            <button className="btn btn-sm btn-outline-light p-1.5 rounded-2" onClick={fetchNotifications} title="Refresh">
+            <button className="btn btn-sm btn-outline-light p-1.5 rounded-circle" onClick={fetchNotifications} title="Refresh Inbox" style={{ width: 34, height: 34 }}>
               <BiRefresh className={`fs-5 ${loading ? 'spin' : ''}`} />
             </button>
-            <button className="btn btn-sm btn-slate-800 text-slate-300 p-1.5 rounded-2 ms-2 hover-text-white" onClick={onClose}>
-              <BiX className="fs-4" />
+            <button className="btn btn-sm btn-slate-800 text-slate-300 p-1.5 rounded-circle ms-1 hover-text-white d-flex align-items-center justify-content-center" onClick={onClose} title="Close (or click outside)" style={{ width: 34, height: 34, backgroundColor: '#334155' }}>
+              <BiX className="fs-4 text-white" />
             </button>
           </div>
         </div>
@@ -104,7 +133,7 @@ const EmailDrawer = ({ isOpen, onClose, onRefreshCount }) => {
             className={`btn btn-sm rounded-pill px-3 fw-medium ${filter === 'UNREAD' ? 'btn-primary shadow-sm' : 'btn-light text-slate-700'}`}
             onClick={() => setFilter('UNREAD')}
           >
-            Unread ({notifications.filter(n => !n.isRead && !n.read).length})
+            Unread ({unreadTotal})
           </button>
           <button 
             className={`btn btn-sm rounded-pill px-3 fw-medium ${filter === 'APPLICATION' ? 'btn-primary shadow-sm' : 'btn-light text-slate-700'}`}
@@ -154,10 +183,10 @@ const EmailDrawer = ({ isOpen, onClose, onRefreshCount }) => {
                       <span className={`badge rounded-pill ${
                         item.type === 'NEW_APPLICATION' ? 'bg-success-subtle text-success' :
                         item.type === 'APPLICATION_CONFIRMATION' ? 'bg-primary-subtle text-primary' : 'bg-info-subtle text-info'
-                      } style={{ fontSize: '11px' }}`}>
+                      }`} style={{ fontSize: '11px' }}>
                         {item.type || 'NOTIFICATION'}
                       </span>
-                      <small className="text-slate-400 style={{ fontSize: '11px' }}">
+                      <small className="text-slate-400" style={{ fontSize: '11px' }}>
                         {item.createdAt ? new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                       </small>
                     </div>

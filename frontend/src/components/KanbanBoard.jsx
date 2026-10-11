@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BiUser, BiFile, BiEnvelope, BiCheckCircle, BiXCircle, 
   BiInfoCircle, BiChevronRight, BiMove, BiCalendarCheck, BiStar
@@ -17,6 +17,16 @@ const KanbanBoard = ({ applications = [], onStatusUpdate }) => {
   const [selectedApp, setSelectedApp] = useState(null);
   const [draggedAppId, setDraggedAppId] = useState(null);
   const [dragOverStage, setDragOverStage] = useState(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && selectedApp) {
+        setSelectedApp(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedApp]);
 
   const getApplicationsForStage = (stageKey) => {
     return applications.filter(app => app.currentStatus === stageKey);
@@ -205,8 +215,15 @@ const KanbanBoard = ({ applications = [], onStatusUpdate }) => {
 
       {/* Candidate Evaluation Modal */}
       {selectedApp && (
-        <div className="modal show d-block backdrop-blur" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered modal-lg">
+        <div 
+          className="modal show d-block backdrop-blur" 
+          style={{ backgroundColor: 'rgba(15, 23, 42, 0.75)', zIndex: 10500 }}
+          onClick={() => setSelectedApp(null)}
+        >
+          <div 
+            className="modal-dialog modal-dialog-centered modal-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-content rounded-4 border-0 shadow-2xl p-3">
               <div className="modal-header border-0">
                 <h5 className="modal-title fw-bold text-dark">Candidate Evaluation Details</h5>

@@ -4,6 +4,7 @@ import SearchBar from '../../components/SearchBar';
 import JobCard from '../../components/JobCard';
 import CompanyCard from '../../components/CompanyCard';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import CompanyLogo from '../../components/CompanyLogo';
 import { jobService } from '../../services/jobService';
 import { companyService } from '../../services/companyService';
 import { 
@@ -150,19 +151,25 @@ const Home = () => {
 
                 {/* Floating Preview Job Cards */}
                 <div className="bg-slate-950 border border-slate-800 rounded-4 p-3 mb-3 d-flex align-items-center justify-content-between shadow-sm">
-                  <div>
-                    <span className="badge bg-success-subtle text-success mb-1 extra-small">Live Application Tracking</span>
-                    <h6 className="fw-bold text-white mb-0 small">Senior Java Full Stack Engineer</h6>
-                    <span className="text-slate-400 extra-small">TechCorp Systems • Chennai</span>
+                  <div className="d-flex align-items-center gap-3">
+                    <CompanyLogo company={{ name: 'TechCorp Systems', industry: 'Software' }} size={42} rounded="rounded-3" />
+                    <div>
+                      <span className="badge bg-success-subtle text-success mb-1 extra-small">Live Application Tracking</span>
+                      <h6 className="fw-bold text-white mb-0 small">Senior Java Full Stack Engineer</h6>
+                      <span className="text-slate-400 extra-small">TechCorp Systems • Chennai</span>
+                    </div>
                   </div>
                   <span className="fw-extrabold text-primary small">₹16.5L PA</span>
                 </div>
 
                 <div className="bg-slate-950 border border-slate-800 rounded-4 p-3 d-flex align-items-center justify-content-between shadow-sm">
-                  <div>
-                    <span className="badge bg-info-subtle text-info mb-1 extra-small">Full Remote</span>
-                    <h6 className="fw-bold text-white mb-0 small">Lead React UI Developer</h6>
-                    <span className="text-slate-400 extra-small">Innovate Global • Bengaluru</span>
+                  <div className="d-flex align-items-center gap-3">
+                    <CompanyLogo company={{ name: 'Innovate Global', industry: 'AI' }} size={42} rounded="rounded-3" />
+                    <div>
+                      <span className="badge bg-info-subtle text-info mb-1 extra-small">Full Remote</span>
+                      <h6 className="fw-bold text-white mb-0 small">Lead React UI Developer</h6>
+                      <span className="text-slate-400 extra-small">Innovate Global • Bengaluru</span>
+                    </div>
                   </div>
                   <span className="fw-extrabold text-primary small">₹14.0L PA</span>
                 </div>

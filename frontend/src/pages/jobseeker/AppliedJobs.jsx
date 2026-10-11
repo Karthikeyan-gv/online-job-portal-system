@@ -3,6 +3,7 @@ import { applicationService } from '../../services/applicationService';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
 import { BiBuilding, BiMapPin, BiTrash, BiHistory, BiFile, BiBroadcast, BiRefresh } from 'react-icons/bi';
+import CompanyLogo from '../../components/CompanyLogo';
 
 const AppliedJobs = () => {
   const [applications, setApplications] = useState([]);
@@ -91,17 +92,20 @@ const AppliedJobs = () => {
               <div key={app.id} className="col-12">
                 <div className="card border-0 shadow-sm rounded-4 p-4 bg-white hover-lift">
                   <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                    <div>
-                      <div className="d-flex align-items-center gap-3 mb-2">
-                        <h5 className="fw-bold text-dark mb-0">{app.job?.title}</h5>
-                        {getStatusBadge(app.currentStatus)}
+                    <div className="d-flex align-items-center gap-3">
+                      <CompanyLogo company={app.job?.company} size={50} rounded="rounded-3" />
+                      <div>
+                        <div className="d-flex align-items-center gap-3 mb-1 flex-wrap">
+                          <h5 className="fw-bold text-dark mb-0">{app.job?.title}</h5>
+                          {getStatusBadge(app.currentStatus)}
+                        </div>
+                        <p className="text-muted mb-1 small d-flex align-items-center gap-2">
+                          <BiBuilding className="text-primary" /> <span className="fw-semibold text-dark">{app.job?.company?.name}</span>
+                          <span>•</span>
+                          <BiMapPin className="text-primary" /> {app.job?.location}
+                        </p>
+                        <span className="extra-small text-muted">Applied on {new Date(app.appliedAt).toLocaleString()}</span>
                       </div>
-                      <p className="text-muted mb-1 small d-flex align-items-center gap-2">
-                        <BiBuilding className="text-primary" /> <span className="fw-semibold text-dark">{app.job?.company?.name}</span>
-                        <span>•</span>
-                        <BiMapPin className="text-primary" /> {app.job?.location}
-                      </p>
-                      <span className="extra-small text-muted">Applied on {new Date(app.appliedAt).toLocaleString()}</span>
                     </div>
 
                     <div className="d-flex align-items-center gap-2">

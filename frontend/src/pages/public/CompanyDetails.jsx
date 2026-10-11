@@ -4,7 +4,8 @@ import { companyService } from '../../services/companyService';
 import { jobService } from '../../services/jobService';
 import JobCard from '../../components/JobCard';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { BiBuilding, BiGlobe, BiEnvelope, BiPhone, BiMapPin, BiBriefcase } from 'react-icons/bi';
+import { BiBuilding, BiGlobe, BiEnvelope, BiPhone, BiMapPin, BiBriefcase, BiCheckShield, BiGroup } from 'react-icons/bi';
+import CompanyLogo from '../../components/CompanyLogo';
 
 const CompanyDetails = () => {
   const { id } = useParams();
@@ -39,24 +40,34 @@ const CompanyDetails = () => {
       <div className="container py-3">
         {/* Banner Card */}
         <div className="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
-          <div className="d-flex align-items-center gap-4">
-            <div className="company-logo bg-primary-subtle text-primary rounded-4 d-flex align-items-center justify-content-center fw-bold fs-1" style={{ width: 80, height: 80 }}>
-              {company.logo ? (
-                <img src={`http://localhost:8080/uploads/${company.logo}`} alt={company.name} className="img-fluid rounded-4" style={{ width: 80, height: 80, objectFit: 'cover' }} />
-              ) : (
-                company.name?.charAt(0)
-              )}
-            </div>
+          <div className="d-flex align-items-center gap-4 flex-wrap">
+            <CompanyLogo company={company} size={84} rounded="rounded-4" className="shadow-sm" />
             <div>
-              <h2 className="fw-extrabold text-dark mb-1">{company.name}</h2>
-              <p className="text-muted mb-2 d-flex align-items-center gap-2">
-                <BiBuilding className="text-primary" /> {company.industry || 'Software & Services'}
+              <h2 className="fw-extrabold text-dark mb-1 d-flex align-items-center">
+                {company.name}
+                <BiCheckShield className="text-primary ms-2 fs-4" title="Verified Enterprise" />
+              </h2>
+              <p className="text-muted mb-2 d-flex align-items-center gap-2 flex-wrap">
+                <span className="d-flex align-items-center gap-1">
+                  <BiBuilding className="text-primary" /> {company.industry || 'Software & Services'}
+                </span>
                 <span>•</span>
-                <BiMapPin className="text-primary" /> {company.city}, {company.country}
+                <span className="d-flex align-items-center gap-1">
+                  <BiMapPin className="text-primary" /> {company.city}, {company.country}
+                </span>
               </p>
-              <div className="d-flex gap-3 small text-muted">
-                {company.website && <span><BiGlobe className="me-1 text-primary" /> <a href={company.website} target="_blank" rel="noreferrer">{company.website}</a></span>}
-                {company.companySize && <span>Size: {company.companySize}</span>}
+              <div className="d-flex gap-3 small text-muted flex-wrap">
+                {company.website && (
+                  <span className="d-flex align-items-center gap-1">
+                    <BiGlobe className="text-primary" /> 
+                    <a href={company.website} target="_blank" rel="noreferrer" className="text-primary text-decoration-none">{company.website}</a>
+                  </span>
+                )}
+                {company.companySize && (
+                  <span className="d-flex align-items-center gap-1">
+                    <BiGroup className="text-primary" /> Size: {company.companySize}
+                  </span>
+                )}
               </div>
             </div>
           </div>

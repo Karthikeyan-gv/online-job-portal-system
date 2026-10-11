@@ -8,8 +8,10 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
 import { 
   BiBuilding, BiMapPin, BiBriefcase, BiMoney, BiCalendar, 
-  BiCheckCircle, BiShareAlt, BiBookmark, BiFile, BiArrowBack 
+  BiCheckCircle, BiShareAlt, BiBookmark, BiFile, BiArrowBack,
+  BiGlobe, BiGroup, BiCheckShield, BiLaptop, BiNetworkChart 
 } from 'react-icons/bi';
+import CompanyLogo from '../../components/CompanyLogo';
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -32,6 +34,16 @@ const JobDetails = () => {
   useEffect(() => {
     fetchJobDetails();
   }, [id]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && showApplyModal) {
+        setShowApplyModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showApplyModal]);
 
   const fetchJobDetails = async () => {
     setLoading(true);
@@ -105,19 +117,21 @@ const JobDetails = () => {
           <div className="row align-items-center g-4">
             <div className="col-lg-8">
               <div className="d-flex align-items-center gap-4 mb-3">
-                <div className="company-logo bg-primary-subtle text-primary rounded-4 d-flex align-items-center justify-content-center fw-bold" style={{ width: 70, height: 70, fontSize: '1.75rem' }}>
-                  {job.company?.logo ? (
-                    <img src={`http://localhost:8080/uploads/${job.company.logo}`} alt={job.company?.name} className="img-fluid rounded-4" style={{ width: 70, height: 70, objectFit: 'cover' }} />
-                  ) : (
-                    job.company?.name?.charAt(0) || 'C'
-                  )}
-                </div>
+                <CompanyLogo company={job.company} size={72} rounded="rounded-4" className="shadow-sm" />
                 <div>
-                  <h2 className="fw-extrabold text-dark mb-1">{job.title}</h2>
-                  <p className="text-muted mb-0 d-flex align-items-center gap-2">
-                    <BiBuilding className="text-primary" /> <span className="fw-semibold text-dark">{job.company?.name}</span>
+                  <h2 className="fw-extrabold text-dark mb-1 d-inline-flex align-items-center flex-wrap gap-2">
+                    {job.title}
+                  </h2>
+                  <p className="text-muted mb-0 d-flex align-items-center gap-2 flex-wrap">
+                    <span className="d-flex align-items-center gap-1">
+                      <BiBuilding className="text-primary" />
+                      <span className="fw-semibold text-dark">{job.company?.name}</span>
+                      <BiCheckShield className="text-primary ms-1" title="Verified Company" />
+                    </span>
                     <span>•</span>
-                    <BiMapPin className="text-primary" /> {job.location || 'Remote'}
+                    <span className="d-flex align-items-center gap-1">
+                      <BiMapPin className="text-primary" /> {job.location || 'Remote'}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -192,22 +206,32 @@ const JobDetails = () => {
             <div className="card border-0 shadow-sm rounded-4 p-4 bg-white sticky-top" style={{ top: '90px' }}>
               <h5 className="fw-bold text-dark mb-3">Company Overview</h5>
               <div className="d-flex align-items-center gap-3 mb-3">
-                <div className="bg-light rounded-circle p-3 d-flex align-items-center justify-content-center fw-bold text-primary fs-4" style={{ width: 50, height: 50 }}>
-                  {job.company?.name?.charAt(0)}
-                </div>
+                <CompanyLogo company={job.company} size={56} rounded="rounded-3" />
                 <div>
-                  <h6 className="fw-bold mb-0 text-dark">{job.company?.name}</h6>
-                  <span className="small text-muted">{job.company?.industry || 'IT Services'}</span>
+                  <h6 className="fw-bold mb-0 text-dark d-flex align-items-center">
+                    {job.company?.name}
+                    <BiCheckShield className="text-primary ms-1" title="Verified Company" />
+                  </h6>
+                  <span className="small text-muted d-flex align-items-center gap-1 mt-0.5">
+                    <BiBuilding className="text-primary" /> {job.company?.industry || 'IT Services'}
+                  </span>
                 </div>
               </div>
               <p className="text-muted small mb-3">{job.company?.description}</p>
 
               <div className="border-top pt-3 small text-muted">
-                <p className="mb-2"><strong>Location:</strong> {job.company?.city}, {job.company?.country}</p>
-                <p className="mb-2"><strong>Company Size:</strong> {job.company?.companySize || '100+ Employees'}</p>
+                <p className="mb-2 d-flex align-items-center gap-2">
+                  <BiMapPin className="text-primary fs-6" /> 
+                  <span><strong>Location:</strong> {job.company?.city || 'Remote'}, {job.company?.country || 'India'}</span>
+                </p>
+                <p className="mb-2 d-flex align-items-center gap-2">
+                  <BiGroup className="text-primary fs-6" /> 
+                  <span><strong>Company Size:</strong> {job.company?.companySize || '100+ Employees'}</span>
+                </p>
                 {job.company?.website && (
-                  <p className="mb-0">
-                    <strong>Website:</strong> <a href={job.company.website} target="_blank" rel="noreferrer" className="text-primary">{job.company.website}</a>
+                  <p className="mb-0 d-flex align-items-center gap-2">
+                    <BiGlobe className="text-primary fs-6" />
+                    <span><strong>Website:</strong> <a href={job.company.website} target="_blank" rel="noreferrer" className="text-primary text-decoration-none">{job.company.website}</a></span>
                   </p>
                 )}
               </div>
@@ -218,8 +242,15 @@ const JobDetails = () => {
 
       {/* Application Modal */}
       {showApplyModal && (
-        <div className="modal show d-block backdrop-blur" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered">
+        <div 
+          className="modal show d-block backdrop-blur" 
+          style={{ backgroundColor: 'rgba(15, 23, 42, 0.75)', zIndex: 10500 }}
+          onClick={() => setShowApplyModal(false)}
+        >
+          <div 
+            className="modal-dialog modal-dialog-centered"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-content rounded-4 border-0 shadow-2xl p-3">
               <div className="modal-header border-0 pb-0">
                 <h5 className="modal-title fw-bold text-dark">Apply for {job.title}</h5>
